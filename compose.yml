@@ -1,0 +1,37 @@
+services:
+  gui:
+    build: .
+    image: tb3-drl
+    container_name: tb3-drl-gui
+    gpus: all
+    stdin_open: true
+    tty: true
+    environment:
+      ENABLE_NOVNC: "1"
+      DRLNAV_BASE_PATH: /workspace
+      TURTLEBOT3_MODEL: burger
+      ROS_DOMAIN_ID: "1"
+    ports:
+      - "6080:6080"
+      - "5901:5901"
+    volumes:
+      - .:/workspace
+    working_dir: /workspace
+    shm_size: "2gb"
+
+  headless:
+    build: .
+    image: tb3-drl
+    container_name: tb3-drl-headless
+    gpus: all
+    stdin_open: true
+    tty: true
+    environment:
+      ENABLE_NOVNC: "0"
+      DRLNAV_BASE_PATH: /workspace
+      TURTLEBOT3_MODEL: burger
+      ROS_DOMAIN_ID: "1"
+    volumes:
+      - .:/workspace
+    working_dir: /workspace
+    shm_size: "2gb"

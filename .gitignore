@@ -1,0 +1,40 @@
+# ROS 2 build artifacts
+build/
+install/
+log/
+logs/
+
+# Editor / local session files
+.vscode/
+tmux*
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Large replay buffers
+*_latest_buffer.pkl
+
+# Original repo per-machine training runs
+# Keep pretrained examples, ignore generated local runs.
+src/turtlebot3_drl/model/*/
+!src/turtlebot3_drl/model/examples/
+
+# Generated original repo test/training outputs
+src/turtlebot3_drl/model/__*_comparison.txt
+src/turtlebot3_drl/model/__*_testing_comparison.txt
+src/turtlebot3_drl/model/examples/*/_test_*.txt
+
+# Our project training artifacts
+# Keep algorithm folders via .gitkeep, ignore generated checkpoints/results.
+models/**/*
+!models/**/
+!models/**/.gitkeep
+
+results/**/*
+!results/**/
+!results/**/.gitkeep
+
+# Local snapshots / backups
+repo_training_snapshot.txt
+*.backup_before_*

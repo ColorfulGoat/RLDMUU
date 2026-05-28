@@ -38,3 +38,4 @@ results/**/*
 # Local snapshots / backups
 repo_training_snapshot.txt
 *.backup_before_*
+*_latest_buffer.pkl

@@ -1,0 +1,84 @@
+algorithm=redq
+stage=9
+mode=train
+run_name=redq_0_stage_9
+source_model_dir=/workspace/models/redq/redq_0_stage_9
+results_dir=/workspace/results/redq/redq_0_stage_9
+created_at=2026-05-15T13:22:26
+model_parameters=128, 1000000, 44, 2, 256, 0.99, 0.003, 0.003, 0.01, A, False, False, 3, 4, N=5, M=2, G=5, batch=128, α=0.200
+model_configuration=device = cuda
+simulation_speed = 1
+state_size = 44
+action_size = 2
+hidden_size = 256
+input_size = 44
+batch_size = 128
+buffer_size = 1000000
+discount_factor = 0.99
+learning_rate = 0.003
+tau = 0.003
+step_time = 0.01
+loss_function = <function smooth_l1_loss at 0x7178f79a1ee0>
+epsilon = None
+epsilon_decay = 1.0
+epsilon_minimum = 0.05
+reward_function = A
+backward_enabled = False
+stacking_enabled = False
+stack_depth = 3
+frame_skip = 4
+networks = [SquashedGaussianActor(
+  (fa1): Linear(in_features=44, out_features=256, bias=True)
+  (fa2): Linear(in_features=256, out_features=256, bias=True)
+  (mu_head): Linear(in_features=256, out_features=2, bias=True)
+  (log_std_head): Linear(in_features=256, out_features=2, bias=True)
+), VectorizedCritic(), VectorizedCritic()]
+iteration = 0
+ensemble_size = 5
+target_subset = 2
+utd_ratio = 5
+last_actor_loss = 0.0
+last_alpha = 0.2
+actor_optimizer = AdamW (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.9, 0.999)
+    capturable: False
+    differentiable: False
+    eps: 1e-08
+    foreach: None
+    fused: None
+    lr: 0.003
+    maximize: False
+    weight_decay: 0.01
+)
+critic_optimizer = AdamW (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.9, 0.999)
+    capturable: False
+    differentiable: False
+    eps: 1e-08
+    foreach: None
+    fused: None
+    lr: 0.003
+    maximize: False
+    weight_decay: 0.01
+)
+autotune_alpha = True
+log_alpha = -1.6094379425048828
+alpha_optimizer = AdamW (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.9, 0.999)
+    capturable: False
+    differentiable: False
+    eps: 1e-08
+    foreach: None
+    fused: None
+    lr: 0.003
+    maximize: False
+    weight_decay: 0.01
+)
+target_entropy = -2.0
+

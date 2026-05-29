@@ -6,7 +6,7 @@ The project compares TurtleBot3 navigation with:
 
 - DDPG
 - TD3
-- SAC
+- REDQ
 
 The project uses:
 

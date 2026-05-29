@@ -1,86 +1,165 @@
 # TurtleBot3 DRL Navigation
 
-This repository is our course project for Deep Reinforcement Learning based autonomous navigation with TurtleBot3 in Gazebo.
+This project is about using Deep Reinforcement Learning to help a robot successfully navigate an unknown environment. The robot gradually learns to reach specific goals while avoiding collisions with walls.
 
-## Project goal
+The project uses ROS 2 Jazzy with Gazebo Harmonic, and it is all implemented inside a containerized environment using Docker.
 
-The goal is to compare three continuous-control deep reinforcement learning algorithms:
+---
 
-- DDPG
-- TD3
-- REDQ
+## Implementation
 
-The final comparison should use the same robot, environment, reward function, training setup, and evaluation method for all algorithms.
+We started from an existing TurtleBot3 DRL navigation baseline and adapted it for our course project. The main focus was not to build a perfect robot navigation system, but to create a reproducible setup where different DRL algorithms can be trained and compared fairly.
 
-## Setup and usage
+In this project we:
 
-For installation, Docker setup, GUI/headless mode, and demo commands, see:
+- use ROS 2 Jazzy and Gazebo Harmonic
+- use Docker with WSL2 as backend
+- implement both GUI mode and headless mode
+- use the TurtleBot3 Burger robot in a custom navigation world
+- use LiDAR, goal distance, goal angle, and previous actions as the agent state
+- train and test continuous-control DRL algorithms
+- compare DDPG, TD3, and REDQ under the same environment
+- save model checkpoints, replay buffers, logs, and result plots for each algo
+
+The key idea is that the environment, reward function, robot, and world stay the same, while only the algorithm changes.
+
+---
+
+## Algorithms
+
+We worked with three off-policy actor-critic algorithms:
+
+| Algorithm | Role in the project |
+|---|---|
+| DDPG | Basic continuous-control baseline |
+| TD3 | More stable version of DDPG with twin critics and delayed actor updates |
+| REDQ | More sample-efficient method using multiple critics and more updates per step |
+
+All three algorithms use the same robot environment and reward function, so the comparison is easier to understand.
+
+---
+
+## System overview
+
+The project runs as a 4 ROS 2 processes working together:
+
+1. **Gazebo simulation** runs the TurtleBot3 world.
+2. **Goal manager** creates and updates navigation goals.
+3. **Environment node** reads sensor data, builds the state, computes reward, and detects episode endings.
+4. **DRL agent** chooses actions and trains the neural networks.
+
+The agent outputs continuous velocity commands, specifically: linear velocity and angular velocity.
+
+---
+
+## Training setup
+
+For training, we use headless mode because it is faster and does not waste resources on the Gazebo GUI or RViz.
+
+Each training run saves useful files, such as:
+
+- actor weights
+- critic weights
+- target network weights
+- replay buffer
+- reward / outcome plot
+- training log
+
+The main folders we use are:
 
 ```text
-README_SETUP.md
+models/
+├── ddpg/
+├── td3/
+└── redq/
+
+results/
+├── ddpg/
+├── td3/
+└── redq/
 ```
 
-## Current status
+This keeps the outputs from different algorithms separate.
 
-Working so far:
+---
 
-- Docker Compose setup
-- noVNC GUI mode
-- Headless mode
-- ROS 2 workspace build
-- TD3 pretrained demo
-- GPU support inside Docker
+## Basic run commands
 
-## Repository structure
+Build the Docker image:
 
-Important folders:
-
-```text
-src/turtlebot3_drl/          DRL agents, environment, reward, utilities
-src/turtlebot3_drl_gazebo/   Gazebo world, launch files, bridges, RViz setup
-src/turtlebot3_msgs/         Custom ROS 2 messages and services
-
-models/                      Our saved trained models
-results/                     Our experiment logs and results
-scripts/                     Helper scripts
+```bash
+docker compose build
 ```
 
-## Models and results
+Start the headless container:
 
-Our own training outputs should be saved in:
-
-```text
-models/ddpg/
-models/td3/
-models/sac/
-
-results/ddpg/
-results/td3/
-results/sac/
+```bash
+docker compose up -d headless
 ```
 
-Generated training and test files from the baseline should not be committed unless they are selected final results.
+Enter the container:
 
-## Project plan
+```bash
+docker exec -it tb3-drl-headless bash
+```
 
-1. Keep the baseline running.
-2. Test TD3 baseline behavior.
-3. Train DDPG from scratch.
-4. Train TD3 from scratch.
-5. Add REDQ.
-6. Train REDQ from scratch.
-7. Add cleaner result logging.
-8. Compare DDPG, TD3, and REDQ under the same evaluation setup.
+Inside the container, source the ROS environment:
 
-## Project rules
+```bash
+source /workspace/scripts/ros_env.sh
+```
 
-- Do not rename ROS 2 packages yet.
-- Keep the baseline working before making major changes.
-- Use Docker for all team members.
-- Use headless mode for training.
-- Use GUI mode for testing, visualization, and demo recording.
-- Save project models in `models/`.
-- Save project results in `results/`.
+Then run the simulation in four terminals.
+
+Terminal 1:
+
+```bash
+ros2 launch turtlebot3_drl_gazebo turtlebot3_drl_stage9.launch.py headless:=true
+```
+
+Terminal 2:
+
+```bash
+ros2 run turtlebot3_drl gazebo_goals
+```
+
+Terminal 3:
+
+```bash
+ros2 run turtlebot3_drl environment
+```
+
+Terminal 4:
+
+```bash
+ros2 run turtlebot3_drl train_agent td3
+```
+
+Replace `td3` with `ddpg` or `redq` to train another algorithm.
+
+---
+
+## Evaluation
+
+For the final comparison, we look at simple metrics:
+
+- average reward
+- success rate
+- collision rate
+- timeout rate
+- episode length
+- training time
+- reward curve over episodes
+
+These metrics are enough to show whether the robot is improving and whether one algorithm is more stable or efficient than another.
+
+---
+
+## Notes
+
+The goal is to show a working DRL pipeline for robot navigation and compare algorithms in a controlled way. Some parts can still be improved, such as longer training, better hyperparameter tuning, more worlds, and a possible federated learning extension.
+
+---
 
 ## Acknowledgements
 
